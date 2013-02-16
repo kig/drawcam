@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="drawcam.js"></script>
+    <script src="filters.js"></script>
+  </head>
+  <body>
+    <h1>DrawCam!</h1>
+    <div id="screen">
+      <canvas id="canvas" width="640" height="480"></canvas>
+      <p>Threshold</p>
+      <br>
+      <input type="range" min="0" max="255" value="64" id="threshold">
+      <br>
+      <button onclick="dc.save()">Save</button>
+    </div>
+  </body>
+</html>
