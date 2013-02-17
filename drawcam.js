@@ -8,6 +8,9 @@ DrawCam.prototype.init = function() {
     navigator.getMedia(
         {video: true},
         (function(stream) {
+            var screen = E.id('screen');
+            E.fadeIn(screen);
+            screen.style.display = 'block';
             var video = document.createElement('video');
             video.width = this.canvas.width;
             video.height = this.canvas.height;
@@ -21,7 +24,7 @@ DrawCam.prototype.init = function() {
             video.src = url;
         }).bind(this),
         function(err) {
-            alert("Couldn't access webcam: " + err);
+            showAllowError();
         }
         
     );
@@ -83,8 +86,56 @@ DrawCam.prototype.resize = function(w,h) {
     this.video.height = this.canvas.height = this.videoCanvas.height = h;
 };
 
+showAllowError = function() {
+    E.fadeOut(E.id('screen'));
+    var allow = E.id('allow');
+    E.css(allow, 'transition', '0.5s');
+    E.css(allow, 'opacity', 0);
+    var e = E.id('allow-error');
+    E.fadeIn(e);
+    e.style.marginTop = '-10px';
+};
+
+showError = function() {
+    E.fadeOut(E.id('screen'));
+    var allow = E.id('allow');
+    E.css(allow, 'transition', '0.5s');
+    E.css(allow, 'opacity', 0);
+    var e = E.id('error');
+    E.fadeIn(e);
+    e.style.marginTop = '-10px';
+    var animateInButton = function(id, dst, x, y, offset) {
+        var btn = E.id(id);
+        E.css(btn, 'transformOrigin', '50% 50%');
+        E.css(btn, 'transform', 'translate('+x+'px,'+y+'px) scale(1) rotate(0deg)');
+        var img = E.tag('img', btn)[0];
+        img.onload = function() {
+            E.css(btn, 'transition', '0.5s');
+            E.css(btn, 'transform', 'translate(0px,0px) scale(1) rotate('+dst+'deg)');
+            E.css(btn, 'opacity', 1);
+        };
+        if (img.complete) {
+            setTimeout(img.onload, offset);
+        }
+    };
+    animateInButton('chrome-button', 720, 0, 200, 200);
+    animateInButton('firefox-button', -720, 0, -200, 0);
+    animateInButton('opera-button', 720, 200, 0, 400);
+};
+
 window.addEventListener('load', function() {
-    dc = new DrawCam(document.getElementById('canvas'));
+    var img = E('img');
+    var bg = E.id('bg');
+    E.css(bg, 'transition', '1s');
+    img.onload = function() {
+        bg.style.opacity = 0.2;
+    };
+    img.src = 'drawcam.png';
+    if (!navigator.getMedia) {
+        showError();
+    } else {
+        dc = new DrawCam(document.getElementById('canvas'));
+    }
 }, false);
 
 

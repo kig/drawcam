@@ -7,10 +7,30 @@
     <link rel="stylesheet" href="style.css" type="text/css">
     <script src="filters.js"></script>
     <script src="drawcam.js"></script>
+    <script src="http://fhtr.org/E..js"></script>
   </head>
   <body>
-    <p>&uparrow; Click on <a>allow</a> to turn on your webcam and see yourself drawn to life.</p>
+    <p id="allow">&uparrow; Click on <a>allow</a> to turn on your webcam and see yourself drawn to life.</p>
     <h1>DrawCam!</h1>
+    <div id="allow-error">
+      <small>
+      <h2>Oops, can't access the webcam</h2>
+      <p>Either your computer doesn't have one or you didn't click allow.</p>
+      <p>No worries, if you want to try again just reload this page.</p>
+      </small>
+    </div>
+    <div id="error">
+      <small>
+      <h2>Oops, can't access the webcam</h2>
+      <p>It looks like your browser doesn't support <a href="http://caniuse.com/#feat=stream">getUserMedia</a>.</p>
+      <p>You could try again with Chrome, Firefox or Opera and see if it works better.</p>
+      </small>
+      <br><br>
+      <div id="chrome-button"><a href="http://chrome.google.com"><img alt="Chrome" width="116" height="116" src="http://fhtr.org/gravityring/1.png"></a></div>
+      <div id="firefox-button"><a href="http://getfirefox.com"><img alt="Firefox" width="128" height="128" src="http://fhtr.org/gravityring/3.png"></a></div>
+      <div id="opera-button"><a href="http://opera.com"><img alt="Opera" width="116" height="116" src="http://fhtr.org/gravityring/7.png"></a></div>
+    </div>
+    
     <div id="bg"></div>
     <div id="screen">
       <canvas id="canvas" width="320" height="240"></canvas>
@@ -30,5 +50,18 @@
         <p><small>&copy; 2013 Ilmari Heikkinen &mdash; <a href="http://fhtr.org">fhtr.org</a></small></p>
       </div>
     </div>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1485935-6']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
   </body>
 </html>
