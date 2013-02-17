@@ -65,6 +65,10 @@ DrawCam.prototype.draw = function() {
         ]);
         this.canvas.getContext('2d').putImageData(npx, 0, 0);
     }
+    if (!this.fadedBg) {
+        this.fadedBg = true;
+        E.fadeOut(E.id('bg'));
+    }
 };
 
 DrawCam.prototype.save = function() {
@@ -77,6 +81,7 @@ DrawCam.prototype.save = function() {
         a.click();
     } else {
         a.display = 'block';
+        a.target = '_blank';
         a.innerHTML = 'Saved Picture';
         document.getElementById('controls').appendChild(document.createElement('hr'));
         document.getElementById('controls').appendChild(a);
@@ -138,6 +143,11 @@ window.addEventListener('load', function() {
         showError();
     } else {
         dc = new DrawCam(document.getElementById('canvas'));
+        // hack around Opera's non-aspect scale when doing width: 100%
+        window.addEventListener('resize', function() {
+            E.sz(dc.canvas, window.innerWidth, 3/4 * window.innerWidth);
+        }, false);
+        E.sz(dc.canvas, window.innerWidth, 3/4 * window.innerWidth);
     }
 }, false);
 
@@ -151,3 +161,12 @@ navigator.getMedia = ( navigator.getUserMedia ||
 if (/Firefox\/1\d\.\d+$/.test(navigator.userAgent)) {
     navigator.getMedia = undefined;
 } 
+// Opera doesn't have window.URL, but this works.
+if (navigator.getMedia) {
+    if(!window.URL) {
+        window.URL = {};
+    }
+    if(!window.URL.createObjectURL) {
+        window.URL.createObjectURL = function(obj){ return obj; };
+    }
+}
