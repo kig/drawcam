@@ -16,12 +16,15 @@ DrawCam.prototype.init = function() {
             video.height = this.canvas.height;
             video.autoplay = true;
             this.video = video;
+            this.video.onmetadataloaded = function() {
+                this.play();
+            };
             this.videoCanvas = document.createElement('canvas');
             this.videoCanvas.width = video.width;
             this.videoCanvas.height = video.height;
-            this.startUpdatingVideo();
             var url = window.URL.createObjectURL(stream);
             video.src = url;
+            this.startUpdatingVideo();
         }).bind(this),
         function(err) {
             showAllowError();
@@ -36,10 +39,11 @@ DrawCam.prototype.startUpdatingVideo = function() {
 };
 
 DrawCam.prototype.draw = function() {
+    E.requestSharedAnimationFrame(this.drawer, this.canvas);
     if (this.videoOn) {
         var vc = this.videoCanvas;
         var ctx = vc.getContext('2d');
-        ctx.clearRect(vc.width, vc.height);
+        ctx.clearRect(0, 0, vc.width, vc.height);
         ctx.drawImage(this.video, 0, 0, vc.width, vc.height);
         var px = Filters.horizontalFlip(Filters.getPixels(vc));
         var t = parseInt(document.getElementById('threshold').value);
@@ -61,7 +65,6 @@ DrawCam.prototype.draw = function() {
         ]);
         this.canvas.getContext('2d').putImageData(npx, 0, 0);
     }
-    window.requestAnimationFrame(this.drawer, this.canvas);
 };
 
 DrawCam.prototype.save = function() {
@@ -138,49 +141,13 @@ window.addEventListener('load', function() {
     }
 }, false);
 
-
-
-
-
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
-// requestAnimationFrame polyfill by Erik Möller
-// fixes from Paul Irish and Tino Zijdel
-
-( function () {
-
-    var lastTime = 0;
-    var vendors = [ 'ms', 'moz', 'webkit', 'o' ];
-
-    for ( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++ x ) {
-
-        window.requestAnimationFrame = window[ vendors[ x ] + 'RequestAnimationFrame' ];
-        window.cancelAnimationFrame = window[ vendors[ x ] + 'CancelAnimationFrame' ] || window[ vendors[ x ] + 'CancelRequestAnimationFrame' ];
-
-        }
-
-    if ( window.requestAnimationFrame === undefined ) {
-
-        window.requestAnimationFrame = function ( callback, element ) {
-
-            var currTime = Date.now(), timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
-            var id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
-            lastTime = currTime + timeToCall;
-            return id;
-
-            };
-
-        }
-
-    window.cancelAnimationFrame = window.cancelAnimationFrame || function ( id ) { window.clearTimeout( id ); };
-
-}() );
-
 // https://developer.mozilla.org/en-US/docs/WebRTC/navigator.getUserMedia
 
 navigator.getMedia = ( navigator.getUserMedia ||
                        navigator.webkitGetUserMedia ||
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
- 
+// Firefox 1x has a disabled getUserMedia
+if (/Firefox\/1\d\.\d+$/.test(navigator.userAgent)) {
+    navigator.getMedia = undefined;
+} 
