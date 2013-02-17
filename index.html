@@ -1,18 +1,32 @@
+<!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <link href="http://fonts.googleapis.com/css?family=Lato:300" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script src="drawcam.js"></script>
     <script src="filters.js"></script>
   </head>
   <body>
+    <p>&uparrow; Click on <a>allow</a> to turn on your webcam and see yourself drawn to life.</p>
     <h1>DrawCam!</h1>
     <div id="screen">
-      <canvas id="canvas" width="640" height="480"></canvas>
-      <p>Threshold</p>
-      <br>
-      <input type="range" min="0" max="255" value="64" id="threshold">
-      <br>
-      <button onclick="dc.save()">Save</button>
+      <canvas id="canvas" width="320" height="240"></canvas>
+      <div id="controls">
+        <div>
+          <h2>Threshold</h2>
+          <input type="range" min="0" max="255" value="64" id="threshold">
+        </div>
+        <div>
+          <h2>Resolution</h2>
+          <p><small><span onclick="dc.resize(320,240)">320x240</span> &ndash; <span onclick="dc.resize(640,480)">640x480</span> &ndash; <span onclick="dc.resize(1280,960)">1280x960</span></small></p>
+        </div>
+        <div>
+          <h2><span class="button" onclick="dc.save()">Save</span></h2>
+        </div>
+        <hr>
+        <p><small>&copy; 2013 Ilmari Heikkinen &mdash; <a href="http://fhtr.org">fhtr.org</a></small></p>
+      </div>
     </div>
   </body>
 </html>

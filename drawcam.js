@@ -72,9 +72,15 @@ DrawCam.prototype.save = function() {
     } else {
         a.display = 'block';
         a.innerHTML = 'Saved Picture';
-        document.body.appendChild(a);
+        document.getElementById('controls').appendChild(document.createElement('hr'));
+        document.getElementById('controls').appendChild(a);
     }
     
+};
+
+DrawCam.prototype.resize = function(w,h) {
+    this.video.width = this.canvas.width = this.videoCanvas.width = w;
+    this.video.height = this.canvas.height = this.videoCanvas.height = h;
 };
 
 window.addEventListener('load', function() {
