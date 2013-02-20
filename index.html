@@ -37,7 +37,16 @@
       <canvas id="canvas" width="320" height="240"></canvas>
       <div id="controls">
         <div>
-          <h2>Threshold</h2>
+          <h2>Hatching</h2>
+          <select id="hatchFilter">
+            <option value="none" selected>None</option>
+            <option value="hatch45">45 deg</option>
+            <option value="hatch315">315 deg</option>
+            <option value="circle">Circular</option>
+          </select>
+        </div>
+        <div>
+          <h2>Shadow Level</h2>
           <input type="range" min="0" max="255" value="64" id="threshold">
         </div>
         <div>

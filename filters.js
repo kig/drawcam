@@ -547,12 +547,12 @@ Filters.gaussianBlur = function(pixels, diameter) {
   diameter = Math.abs(diameter);
   if (diameter <= 1) return Filters.identity(pixels);
   var radius = diameter / 2;
-  var len = Math.ceil(diameter) + (1 - (Math.ceil(diameter) % 2))
+  var len = Math.ceil(diameter) + (1 - (Math.ceil(diameter) % 2));
   var weights = this.getFloat32Array(len);
   var rho = (radius+0.5) / 3;
   var rhoSq = rho*rho;
   var gaussianFactor = 1 / Math.sqrt(2*Math.PI*rhoSq);
-  var rhoFactor = -1 / (2*rho*rho)
+  var rhoFactor = -1 / (2*rho*rho);
   var wsum = 0;
   var middle = Math.floor(len/2);
   for (var i=0; i<len; i++) {
@@ -809,4 +809,111 @@ Filters.erode = function(pixels) {
     }
   }
   return output;
+};
+
+Filters.circleHatch = function(pixels, stride, threshold) {
+    var src = pixels.data;
+    var sw = pixels.width;
+    var sh = pixels.height;
+
+    var w = sw;
+    var h = sh;
+    var output = Filters.createImageData(w, h);
+    var dst = output.data;
+
+    for (var y=0; y<h; y++) {
+        for (var x=0; x<w; x++) {
+            var off = (y*w+x)*4;
+            var cy = y-h/2;
+            var cx = x-w/2;
+            var R = Math.sqrt(cx*cx+cy*cy);
+
+            var r = src[off];
+            var g = src[off+1];
+            var b = src[off+2];
+            var v = 0.3*r + 0.59*g + 0.11*b;
+            var f = v/(Math.abs(threshold)+1);
+            var s = Math.floor(stride*f)+2;
+            
+            if ((f < 1 && Math.floor(R) % s === 0)) {
+                dst[off] = 0;
+                dst[off+1] = 0;
+                dst[off+2] = 0;
+                dst[off+3] = 255;
+            } else {
+                dst[off] = dst[off+1] = dst[off+2] = dst[off+3] = 255;
+            }
+        }
+    }
+    return output;
+};
+
+Filters.hatch315 = function(pixels, stride, threshold) {
+    var src = pixels.data;
+    var sw = pixels.width;
+    var sh = pixels.height;
+
+    var w = sw;
+    var h = sh;
+    var output = Filters.createImageData(w, h);
+    var dst = output.data;
+
+    for (var y=0; y<h; y++) {
+        for (var x=0; x<w; x++) {
+            var off = (y*w+x)*4;
+            var R = x-y;
+
+            var r = src[off];
+            var g = src[off+1];
+            var b = src[off+2];
+            var v = 0.3*r + 0.59*g + 0.11*b;
+            var f = v/(Math.abs(threshold)+1);
+            var s = Math.floor(stride*f)+2;
+            
+            if ((f < 1 && Math.floor(R) % s === 0)) {
+                dst[off] = 0;
+                dst[off+1] = 0;
+                dst[off+2] = 0;
+                dst[off+3] = 255;
+            } else {
+                dst[off] = dst[off+1] = dst[off+2] = dst[off+3] = 255;
+            }
+        }
+    }
+    return output;
+};
+
+Filters.hatch45 = function(pixels, stride, threshold) {
+    var src = pixels.data;
+    var sw = pixels.width;
+    var sh = pixels.height;
+
+    var w = sw;
+    var h = sh;
+    var output = Filters.createImageData(w, h);
+    var dst = output.data;
+
+    for (var y=0; y<h; y++) {
+        for (var x=0; x<w; x++) {
+            var R = x+y;
+            var off = (y*w+x)*4;
+
+            var r = src[off];
+            var g = src[off+1];
+            var b = src[off+2];
+            var v = 0.3*r + 0.59*g + 0.11*b;
+            var f = v/(Math.abs(threshold)+1);
+            var s = Math.floor(stride*f)+2;
+            
+            if ((f < 1 && Math.floor(R) % s === 0)) {
+                dst[off] = 0;
+                dst[off+1] = 0;
+                dst[off+2] = 0;
+                dst[off+3] = 255;
+            } else {
+                dst[off] = dst[off+1] = dst[off+2] = dst[off+3] = 255;
+            }
+        }
+    }
+    return output;
 };

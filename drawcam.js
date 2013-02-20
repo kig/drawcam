@@ -46,23 +46,56 @@ DrawCam.prototype.draw = function() {
         ctx.clearRect(0, 0, vc.width, vc.height);
         ctx.drawImage(this.video, 0, 0, vc.width, vc.height);
         var px = Filters.horizontalFlip(Filters.getPixels(vc));
-        var t = parseInt(document.getElementById('threshold').value);
-        var nnpx = Filters.runPipeline([
-            {name: 'threshold', args: [px, t]},
-            {name: 'erode', args: []}
+        var threshold = parseInt(document.getElementById('threshold').value);
+        var filter = document.getElementById('hatchFilter').value;
+
+        var hatchStride = 6;
+        var shadowTone = {name: 'applyLUT', args: [{
+            r: {0: 255, 255: 255}, 
+            g: {0: 0, 255: 255},
+            b: {0: 0, 255: 255},
+            a: Filters.identityLUT()
+        }]};
+        var lightTone = {name: 'applyLUT', args: [{
+            r: {0: 0, 255: 255}, 
+            g: {0: 80, 255: 255},
+            b: {0: 225, 255: 255},
+            a: Filters.identityLUT()
+        }]};
+
+        var nnpx = null;
+        var hatchPipeline = [];
+        switch (filter) {
+            case 'circle':
+            hatchPipeline.push({name: 'circleHatch', args: [px, hatchStride, threshold]});
+            break;
+            case 'hatch45':
+            hatchPipeline.push({name: 'hatch45', args: [px, hatchStride, threshold]});
+            break;
+            case 'hatch315':
+            hatchPipeline.push({name: 'hatch315', args: [px, hatchStride, threshold]});
+            break;
+        }
+        if (hatchPipeline.length > 0) {
+            hatchPipeline.push(shadowTone);
+            nnpx = Filters.runPipeline(hatchPipeline);
+        }
+        var nnnpx = Filters.runPipeline([
+            {name: 'threshold', args: [px, threshold]},
+            {name: 'erode', args: []},
+            shadowTone
         ]);
-        var npx = Filters.runPipeline([
+        var pipeline = [
             {name: 'sobel', args: [px]},
             {name: 'threshold', args: [32, 0, 255]},
             {name: 'erode', args: []},
-            {name: 'applyLUT', args: [{
-                r: {0: 255, 255: 255}, 
-                g: {0: 0, 255: 255},
-                b: {0: 0, 255: 255},
-                a: Filters.identityLUT()
-            }]},
-            {name: 'multiplyBlend', args: [nnpx]}
-        ]);
+            lightTone,
+            {name: 'darkenBlend', args: [nnnpx]}
+        ];
+        if (nnpx) {
+            pipeline.push({name: 'darkenBlend', args: [nnpx]});
+        }
+        var npx = Filters.runPipeline(pipeline);
         this.canvas.getContext('2d').putImageData(npx, 0, 0);
     }
     if (!this.fadedBg) {
