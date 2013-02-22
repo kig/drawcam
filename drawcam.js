@@ -51,15 +51,15 @@ DrawCam.prototype.draw = function() {
 
         var hatchStride = 6;
         var shadowTone = {name: 'applyLUT', args: [{
-            r: {0: 30, 255: 255}, 
-            g: {0: 100, 255: 255},
-            b: {0: 225, 255: 255},
+            r: {0: 0, 255: 255}, 
+            g: {0: 0, 255: 255},
+            b: {0: 0, 255: 255},
             a: Filters.identityLUT()
         }]};
         var lightTone = {name: 'applyLUT', args: [{
-            r: {0: 30, 255: 255}, 
-            g: {0: 150, 255: 255},
-            b: {0: 255, 255: 255},
+            r: {0: 255, 255: 255}, 
+            g: {0: 0, 255: 255},
+            b: {0: 0, 255: 255},
             a: Filters.identityLUT()
         }]};
 
