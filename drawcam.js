@@ -29,7 +29,6 @@ DrawCam.prototype.init = function() {
         function(err) {
             showAllowError();
         }
-        
     );
 };
 
